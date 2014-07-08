@@ -29,6 +29,10 @@
 #include <linux/input.h>
 #include <linux/kmod.h>
 #include <linux/slab.h>
+#include <asm/uaccess.h>
+
+#define MLTCLP_MAJOR 66
+#define NBROFBUF 128
 
 int mc_init(void);
 void mc_exit(void);
@@ -36,7 +40,7 @@ int kdb_notifier(struct notifier_block* nb, unsigned long code, void* _param);
 
 struct notifier_block nb =
 {
-  .notifier_call = kdb_notifier
+	.notifier_call = kdb_notifier
 };
 
 #endif

@@ -22,7 +22,7 @@
 
 import sys
 
-f = open('log.txt', 'a+')
+f = open('/var/log/multiclip.log', 'a+')
 for arg in sys.argv:
 	f.write(arg+" ")
 f.write("\n")
