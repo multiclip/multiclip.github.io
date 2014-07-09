@@ -9,7 +9,7 @@ modules:
 endif
 
 clean:
-	rm -rf *.o *~ *.ko *.mod.c Module.* *.order .tmp_versions \.*.cmd /bin/multiclip
+	rm -rf *.o *~ *.ko *.mod.c Module.* *.order .tmp_versions \.*.cmd
 	
 install:
 	init.sh

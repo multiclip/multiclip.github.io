@@ -20,17 +20,19 @@
 */
 
 #include "multiclip.h"
+#include <asm/siginfo.h>
+#include <linux/rcupdate.h>
+#include <linux/sched.h>
 
-static char lctrl=0, rctrl=0, c=0, v=0, pressed=0;
-static char press[256] = {0};
-static char * envp[] = { "HOME=/", NULL };
-static char * argv[] = { "/bin/multiclip", NULL, NULL, NULL };
+#define SIG_TEST 44
 
 int dev_open(struct inode *inode, struct file *filp);
 ssize_t dev_read(struct file *filp, char *buff, size_t len, loff_t *off);
 ssize_t dev_write(struct file *filp, const char *buff, size_t len, loff_t *off);
-char **boardBuf;
-int *sizeBuf;
+char *boardBuf[NBROFBUF+1];
+int sizeBuf[NBROFBUF+1];
+int pid = 0;
+int pressed, press[256], c,v, lctrl, rctrl;
 
 struct file_operations mc_fops =
 {
@@ -39,28 +41,29 @@ struct file_operations mc_fops =
 	.open = dev_open
 };
 
-char *itoa(int x)
+void sendSignal(int type, int code)
 {
-	int i;
-	char *a = kmalloc(10, GFP_USER);
+	int ret;
+	struct siginfo info;
+	struct task_struct *t;
 	
-	for(i=0;i<10;i++)
-		a[i] = 0;
+	memset(&info, 0, sizeof(struct siginfo));
+	info.si_signo = SIG_TEST;
+	info.si_code = SI_QUEUE;
+	info.si_int = (code&0xFF) | (type << 8);
 	
-	i=0;
-	while(x)
+	rcu_read_lock();
+	t = pid_task(find_pid_ns(pid, &init_pid_ns), PIDTYPE_PID);	
+	if(t == NULL)
 	{
-		a[i++] = x%10 + '0';
-		x/=10;
+		printk(KERN_DEBUG "[multiclip]: no such pid\n");
+		rcu_read_unlock();
+		return;
 	}
-	x=i-1;
-	for(i=0;i*2<x;i++)
-	{
-		char t = a[i];
-		a[i] = a[x-i];
-		a[x-i] = t;
-	}
-	return a;
+	rcu_read_unlock();
+	ret = send_sig_info(SIG_TEST, &info, t);
+	if (ret < 0)
+		printk(KERN_DEBUG "[multiclip]: error sending signal\n");
 }
 
 int kdb_notifier(struct notifier_block* nb, unsigned long code, void* _param)
@@ -117,39 +120,25 @@ int kdb_notifier(struct notifier_block* nb, unsigned long code, void* _param)
 	{
 		if(lctrl || rctrl)
 		{
+			for(i=0;i<256;i++)
+				if(press[i])
+					break;
+			if(i>0)
+				sendSignal(0, i);
+				
 			if(c)
 			{
 				pressed = 1;
-				printk(KERN_DEBUG "[multiclip]: copy\n");
-				argv[1] = "COPY";
-				if(argv[2]!=NULL)
-					kfree(argv[2]);
-				argv[2] = NULL;
-				for(i=0;i<256;i++)
-					if(press[i])
-					{
-						argv[2] = itoa(i);
-						break;
-					}
-				printk(KERN_DEBUG "[multiclip]: %s %d\n", argv[2], i);
-				call_usermodehelper(argv[0], argv, envp, UMH_NO_WAIT);
+
+				printk(KERN_DEBUG "[multiclip]: copy %d\n", i);
+				sendSignal(0, i);
 			}
 			if(v)
 			{
 				pressed = 1;
-				printk(KERN_DEBUG "[multiclip]: paste\n");
-				argv[1] = "PASTE";
-				if(argv[2]!=NULL)
-					kfree(argv[2]);
-				argv[2] = NULL;
-				for(i=0;i<256;i++)
-					if(press[i])
-					{
-						argv[2] = itoa(i);
-						break;
-					}
-				printk(KERN_DEBUG "%s %d\n", argv[2], i);
-				call_usermodehelper(argv[0], argv, envp, UMH_NO_WAIT);
+
+				printk(KERN_DEBUG "[multiclip]: paste %d\n", i);
+				sendSignal(1, i);
 			}
 		}
 	}
@@ -165,9 +154,7 @@ int mc_init(void)
 	register_chrdev(MLTCLP_MAJOR, "multiclip", &mc_fops);
 	register_keyboard_notifier(&nb);
 	
-	boardBuf = kmalloc(sizeof(char*)*NBROFBUF, GFP_USER);
-	sizeBuf = kmalloc(sizeof(int)*NBROFBUF, GFP_USER);
-	for(i=0;i<NBROFBUF;i++)
+	for(i=0;i<=NBROFBUF;i++)
 		boardBuf[i] = kmalloc(sizeof(char*)*128, GFP_USER), sizeBuf[i] = 128;
 	
 	printk(KERN_DEBUG "[multiclip]: loaded\n");
@@ -178,15 +165,16 @@ void mc_exit(void)
 {
 	int i;
 	unregister_chrdev(MLTCLP_MAJOR, "multiclip");
+	
+	printk(KERN_DEBUG "[multiclip]: unload-1\n");
     
 	unregister_keyboard_notifier(&nb);
-	if(argv[2]!=NULL)
-		kfree(argv[2]);
+	
+	printk(KERN_DEBUG "[multiclip]: unload-2\n");
 		
-	for(i=0;i<NBROFBUF;i++)
-		kfree(boardBuf[i]);
-	kfree(boardBuf);
-	kfree(sizeBuf);
+	for(i=0;i<=NBROFBUF;i++)
+		if(boardBuf[i]!=NULL)
+			kfree(boardBuf[i]);
 	
 	printk(KERN_DEBUG "[multiclip]: unloaded\n");
 }
@@ -204,6 +192,18 @@ ssize_t dev_read(struct file *filp, char *buff, size_t len, loff_t *off)
 	int minor = (int)filp->private_data;
 	printk(KERN_DEBUG "[multiclip]: Read from %d with %d bytes, offset:%d\n", minor, len, *off);
 	
+	if(minor>NBROFBUF)
+		return -1;
+	
+	if(minor == NBROFBUF)
+	{
+		sprintf(boardBuf[minor], "%d", pid);
+		len = strlen(boardBuf[minor]+*off);
+		copy_to_user(buff, boardBuf[minor]+*off, len);
+		*off += len; 
+		return len;
+	}
+		
 	if(*off>=strlen(boardBuf[minor]))
 		return 0;
 		
@@ -226,10 +226,20 @@ ssize_t dev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
 	
 	printk(KERN_DEBUG "[multiclip]: Write to %d with %d bytes\n", minor, len);
 	
+	if(minor>NBROFBUF)
+		return -1;
+		
+	if(minor == NBROFBUF)
+	{
+		sscanf(buff, "%d", &pid);
+		return len;
+	}
+		
 	if(len>sizeBuf[minor])
 	{
 		kfree(boardBuf[minor]);
 		boardBuf[minor] = kmalloc(len+5, GFP_USER);
+		sizeBuf[minor] = len+2;
 	}
 	
 	for(i=0;i<len;i++)
