@@ -32,7 +32,7 @@ int main ( int argc, char **argv )
 	sig.sa_flags = SA_SIGINFO;
 	sigaction(SIG_TEST, &sig, NULL);
 
-	open("/dev/multiclip/board", O_WRONLY);
+	configfd = open("/dev/multiclip/board", O_WRONLY);
 	sprintf(buf, "%i", getpid());
 	write(configfd, buf, strlen(buf) + 1);
 	
