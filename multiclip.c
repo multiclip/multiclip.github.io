@@ -124,7 +124,7 @@ int kdb_notifier(struct notifier_block* nb, unsigned long code, void* _param)
 				if(press[i])
 					break;
 			if(i>0)
-				sendSignal(0, i);
+				sendSignal(1, i);
 				
 			if(c)
 			{
