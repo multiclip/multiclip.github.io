@@ -7,6 +7,7 @@ MLTCLP_MAJOR=66
 make clean
 make
 
+gcc multi.c -omulticlip
 ln -s `pwd`/multiclip /bin/multiclip
 rm -rf /dev/multiclip
 mkdir -p /dev/multiclip
