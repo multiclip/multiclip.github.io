@@ -1,1 +1,0 @@
-cmd_/home/kadircet/Desktop/multiclip/multiclip-cur/multiclip.ko := ld -r -m elf_x86_64 -T /usr/src/linux-headers-3.13.0-30-generic/scripts/module-common.lds --build-id  -o /home/kadircet/Desktop/multiclip/multiclip-cur/multiclip.ko /home/kadircet/Desktop/multiclip/multiclip-cur/multiclip.o /home/kadircet/Desktop/multiclip/multiclip-cur/multiclip.mod.o
