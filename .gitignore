@@ -2,3 +2,5 @@
 *.ko
 *.pyc
 .*
+*.order
+multiclip
