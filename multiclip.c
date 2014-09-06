@@ -183,14 +183,14 @@ int dev_open(struct inode *inode, struct file *filp)
 {
 	printk(KERN_DEBUG "[multiclip]: Opening %d\n", MINOR(inode->i_rdev));
 	
-	filp->private_data = (void*)MINOR(inode->i_rdev);
+	filp->private_data = (void*)(long)MINOR(inode->i_rdev);
 	return 0;
 }
 
 ssize_t dev_read(struct file *filp, char *buff, size_t len, loff_t *off)
 {
-	int minor = (int)filp->private_data;
-	printk(KERN_DEBUG "[multiclip]: Read from %d with %d bytes, offset:%d\n", minor, len, *off);
+	int minor = (long)filp->private_data;
+	printk(KERN_DEBUG "[multiclip]: Read from %d with %zu bytes, offset:%lld\n", minor, len, *off);
 	
 	if(minor>NBROFBUF)
 		return -1;
@@ -222,9 +222,9 @@ ssize_t dev_read(struct file *filp, char *buff, size_t len, loff_t *off)
 
 ssize_t dev_write(struct file *filp, const char *buff, size_t len, loff_t *off)
 {
-	int minor = (int)filp->private_data, i;
+	int minor = (long)filp->private_data, i;
 	
-	printk(KERN_DEBUG "[multiclip]: Write to %d with %d bytes\n", minor, len);
+	printk(KERN_DEBUG "[multiclip]: Write to %d with %zu bytes\n", minor, len);
 	
 	if(minor>NBROFBUF)
 		return -1;
