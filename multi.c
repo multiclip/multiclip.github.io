@@ -8,7 +8,7 @@
 void receiveData(int n, siginfo_t *info, void *unused)
 {
 	printf("received value %i %i\n", info->si_int & 0xFF, info->si_int>>8);
-	system("notify-send sigrecived");
+	//system("notify-send -t 500 sigrecived");
 	
 	int code = info->si_int & 0xFF;
 	int type = info->si_int>>8;
@@ -19,7 +19,6 @@ void receiveData(int n, siginfo_t *info, void *unused)
 	else //PASTE
 		sprintf(cmd, "xclip -selection c -i /dev/multiclip/board%d", code);
 	system(cmd);
-	system(cmd);system(cmd);
 }
 
 int main ( int argc, char **argv )
