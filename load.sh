@@ -19,9 +19,12 @@ do
 done
 
 mknod /dev/multiclip/board c $MLTCLP_MAJOR 128
-chmod a+r+w /dev/multiclip/board
+chmod 777 /dev/multiclip/board
 
 echo "Loading module .."
 $INSMOD "$MODULE".ko
 
 echo "module installed succesfully"
+
+update-rc.d multiclipd defaults
+service multiclipd start

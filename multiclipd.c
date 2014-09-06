@@ -1,7 +1,13 @@
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdlib.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <unistd.h>
+#include <syslog.h>
 
 #define SIG_TEST 44
 
@@ -15,9 +21,9 @@ void receiveData(int n, siginfo_t *info, void *unused)
 	
 	char cmd[100];
 	if(type==0)//COPY
-		sprintf(cmd, "xclip -o > /dev/multiclip/board%d", code);
+		sprintf(cmd, "DISPLAY=:0 XAUTHORITY=~/.Xauthority xclip -o > /dev/multiclip/board%d", code);
 	else //PASTE
-		sprintf(cmd, "xclip -selection c -i /dev/multiclip/board%d", code);
+		sprintf(cmd, "DISPLAY=:0 XAUTHORITY=~/.Xauthority xclip -selection c -i /dev/multiclip/board%d", code);
 	system(cmd);
 }
 
@@ -25,13 +31,32 @@ int main ( int argc, char **argv )
 {
 	int configfd;
 	char buf[10];
-	
+	pid_t pid, sid;
 	struct sigaction sig;
-	sig.sa_sigaction = receiveData;
+	
+	setlogmask(LOG_UPTO(LOG_NOTICE));
+    openlog("multiclipd", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+
+    syslog(LOG_INFO, "Entering mutliclipdaemon\n");
+	
+	
+	pid = fork();
+	
+	if (pid < 0) { exit(EXIT_FAILURE); }
+	if (pid > 0) { exit(EXIT_SUCCESS); }
+	umask(0);
+	sid = setsid();
+    if (sid < 0) { exit(EXIT_FAILURE); }
+    if ((chdir("/")) < 0) { exit(EXIT_FAILURE); }
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
+    
+    sig.sa_sigaction = receiveData;
 	sig.sa_flags = SA_SIGINFO;
 	sigaction(SIG_TEST, &sig, NULL);
-
-	configfd = open("/dev/multiclip/board", O_WRONLY);
+    
+    configfd = open("/dev/multiclip/board", O_WRONLY);
 	sprintf(buf, "%i", getpid());
 	write(configfd, buf, strlen(buf) + 1);
 	

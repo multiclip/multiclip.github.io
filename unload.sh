@@ -7,6 +7,8 @@ echo "Removing module .."
 $RMMOD "$MODULE".ko
 rm -rf /dev/multiclip
 rm -rf /usr/sbin/multiclipd
+update-rc.d multiclipd remove
 
 echo "module removed succesfully"
+
 exit 0
