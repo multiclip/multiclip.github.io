@@ -5,10 +5,9 @@ MODULE=multiclip
 MLTCLP_MAJOR=66
 
 make clean
-make
+make 
 
-gcc multi.c -omulticlip
-ln -s `pwd`/multiclip /bin/multiclip
+gcc /usr/local/multiclip/multiclipd.c -o /usr/sbin/multiclipd
 rm -rf /dev/multiclip
 mkdir -p /dev/multiclip
 for i in $(seq 0 127)
@@ -21,6 +20,6 @@ mknod /dev/multiclip/board c $MLTCLP_MAJOR 128
 chmod a+r+w /dev/multiclip/board
 
 echo "Loading module .."
-$INSMOD "$MODULE".ko || exit 1
+$INSMOD "$MODULE".ko
 
 echo "module installed succesfully"
