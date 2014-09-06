@@ -80,7 +80,7 @@ def get_all():
     result = []
     for scan_code in key_dict.values():
         value = get(scan_code)
-        if value:
+        if value != "''":
             result.append((scan_code, value))
     return result
 
