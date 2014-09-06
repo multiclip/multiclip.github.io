@@ -4,8 +4,10 @@ INSMOD=`which insmod`
 MODULE=multiclip
 MLTCLP_MAJOR=66
 
-make clean
-make 
+cd /usr/local/multiclip/
+
+make -C /usr/local/multiclip/ clean
+make -C /usr/local/multiclip/
 
 gcc /usr/local/multiclip/multiclipd.c -o /usr/sbin/multiclipd
 rm -rf /dev/multiclip
