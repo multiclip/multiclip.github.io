@@ -1,9 +1,7 @@
 #!/usr/bin/python
 import optparse
 
-
 KEYS_PATH = '/dev/multiclip/board'
-
 key_dict = {
     '1': 2,
     '2': 3,
@@ -53,12 +51,11 @@ def get_scan_code_dict():
 
 def parse_args():
     parser = optparse.OptionParser()
-    parser.add_option('-k', '--key',
-                      dest='key',
+    parser.add_option('-k', '--key', dest='key',
                       type='string',
                       action='store',
                       metavar='KEY',
-                      help='get value of a spesific key'
+                      help='get value of a specific key'
     )
     parser.add_option('-a', '--all',
                       dest='all',
@@ -69,7 +66,7 @@ def parse_args():
 
 
 def get(scan_code):
-    return repr( open(KEYS_PATH + str(scan_code), 'r').read() )
+    return repr(open(KEYS_PATH + str(scan_code), 'r').read())
 
 
 def get_all():
@@ -94,7 +91,7 @@ def main():
         for (scan_code, value) in all_list:
             print scan_code_dict[scan_code] + ' : ' + value
     elif options.key:
-        if not ( len(options.key)==1 and ('A' <= options.key <= 'Z' or '0' <= options.key <= '9')) :
+        if not ( len(options.key) == 1 and ('A' <= options.key <= 'Z' or '0' <= options.key <= '9')):
             print 'You can only enter 0-9 or A-Z'
         else:
             print get(key_dict[options.key])
