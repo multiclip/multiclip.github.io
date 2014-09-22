@@ -11,6 +11,8 @@
 
 #define SIG_TEST 44
 
+uid_t userID;
+
 void receiveData(int n, siginfo_t *info, void *unused)
 {
 	printf("received value %i %i\n", info->si_int & 0xFF, info->si_int>>8);
@@ -24,7 +26,10 @@ void receiveData(int n, siginfo_t *info, void *unused)
 		sprintf(cmd, "DISPLAY=:0 XAUTHORITY=~/.Xauthority xclip -o > /dev/multiclip/board%d", code);
 	else //PASTE
 		sprintf(cmd, "DISPLAY=:0 XAUTHORITY=~/.Xauthority xclip -selection c -i /dev/multiclip/board%d", code);
+	
+	setuid(userID);
 	system(cmd);
+	setuid(0);
 }
 
 int main ( int argc, char **argv )
@@ -33,6 +38,8 @@ int main ( int argc, char **argv )
 	char buf[10];
 	pid_t pid, sid;
 	struct sigaction sig;
+	
+	userID = 1000;
 	
 	setlogmask(LOG_UPTO(LOG_NOTICE));
     openlog("multiclipd", LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
