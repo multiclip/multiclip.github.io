@@ -27,9 +27,9 @@ void receiveData(int n, siginfo_t *info, void *unused)
 	else //PASTE
 		sprintf(cmd, "DISPLAY=:0 XAUTHORITY=~/.Xauthority xclip -selection c -i /dev/multiclip/board%d", code);
 	
-	setuid(userID);
+	//setuid(userID);
 	system(cmd);
-	setuid(0);
+	//setuid(0);
 }
 
 int main ( int argc, char **argv )

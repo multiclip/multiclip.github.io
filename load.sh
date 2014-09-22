@@ -27,5 +27,7 @@ $INSMOD "$MODULE".ko
 echo "module installed succesfully"
 
 export DISPLAY=:0
+
+xhost +
 update-rc.d multiclipd defaults
 service multiclipd start
