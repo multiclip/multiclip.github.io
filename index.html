@@ -1,56 +1,91 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-dark.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
     <title>Multiclip by esrefozturk</title>
-
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-light.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
+
+    <header>
+      <div class="container">
         <h1>Multiclip</h1>
-        <p>Multiple Clipboards for Copy and Paste</p>
+        <h2>Multiple Clipboards</h2>
 
-        <p class="view"><a href="https://github.com/esrefozturk/multiclip">View the Project on GitHub <small>esrefozturk/multiclip</small></a></p>
+        <section id="downloads">
+          <a href="https://github.com/esrefozturk/multiclip/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/esrefozturk/multiclip/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/esrefozturk/multiclip" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
 
-
-        <ul>
-          <li><a href="https://github.com/esrefozturk/multiclip/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/esrefozturk/multiclip/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/esrefozturk/multiclip">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+    <div class="container">
+      <section id="main_content">
         <h1>
-<a id="multiclip" class="anchor" href="#multiclip" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multiclip</h1>
+<a id="multiclip---multiple-clipboards" class="anchor" href="#multiclip---multiple-clipboards" aria-hidden="true"><span class="octicon octicon-link"></span></a>Multiclip - Multiple Clipboards</h1>
 
-<p>Kopyala ve Yapıştır İçin Çoklu Panolar</p>
+<h2>
+<a id="description" class="anchor" href="#description" aria-hidden="true"><span class="octicon octicon-link"></span></a>Description</h2>
 
-<h1>
-<a id="nasıl-kullanırım" class="anchor" href="#nas%C4%B1l-kullan%C4%B1r%C4%B1m" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nasıl Kullanırım</h1>
+<p>It a kernel module designed and developed during the <a href="http://kamp.pardus.org.tr/">Pardus Software Camp 2014</a>. It provides multiclipboard capability using x11 on Debian based operating systems.</p>
+
+<h2>
+<a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to install</h2>
+
+<p>Let’s proceed step by step:</p>
 
 <ul>
-<li>
-<code>multiclip</code> komutuyla istediginiz bir panoyu ya da tüm panoları görüntüleyebilirsiniz.</li>
-<li>
-<code>service multiclipd {start|stop|restart|reload|force-reload}</code> komutuyla uygulamayı yönetebilirsiniz.</li>
-<li>ctrl + [harf veya sayı] + c kombinasyonuyla ekranda seçili olan veriyi kullandığınız tuşun panosuna kaydedin.</li>
-<li>ctrl + [harf veya sayı] + v kombinasyonuyla kullandığınız tuşun panosundaki veriyi ekrana yapıştırın.</li>
+<li>clone the repository using <code>git@github.com:esrefozturk/multiclip.git</code>
+</li>
+<li>change directory using <code>cd multiclip</code>
+</li>
+<li>install the multiclip package using <code>sudo dpkg -i multiclip_1.0_all.deb</code>
+</li>
 </ul>
+
+<h2>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span class="octicon octicon-link"></span></a>How to use</h2>
+
+<p>You can</p>
+
+<ul>
+<li>display any clipboard or all clipboards using <code>multiclip</code>
+</li>
+<li>manage the apllication using <code>service multiclipd {start|stop|restart|reload|force-reload}</code>
+</li>
+<li>copy the selected text on the screen to clipboard of pressed key using <code>[CTRL] + [ letter or number ] + [C]</code> combinations</li>
+<li>paste the text on the clipboard of pressed key to screen using <code>[CTRL] + [ letter or number ] + [V]</code> combinations</li>
+</ul>
+
+<h2>
+<a id="where-to-get-help" class="anchor" href="#where-to-get-help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where to get help</h2>
+
+<p>If you want to try our project and something doesn’t go as expected, drop us a line at <a href="mailto:kadircetinkaya.06.tr@gmail.com">kadircetinkaya.06.tr@gmail.com</a> or <a href="mailto:esrefozturk93@gmail.com">esrefozturk93@gmail.com</a></p>
+
+<h2>
+<a id="contribution" class="anchor" href="#contribution" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contribution</h2>
+
+<p>We both love open source software and would like to see pull requests.</p>
+
+<h2>
+<a id="contributor-list" class="anchor" href="#contributor-list" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributor list</h2>
+
+<ul>
+<li><a href="https://github.com/kadircet">Kadir</a></li>
+<li><a href="https://github.com/esrefozturk">Esref</a></li>
+</ul>
+
+<p>Built with hugs and bugs in Ankara.</p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/esrefozturk">esrefozturk</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
     
   </body>
 </html>
