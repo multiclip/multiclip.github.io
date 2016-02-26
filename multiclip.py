@@ -33,16 +33,12 @@ try:
 	if len(sys.argv)>=2:
 		if sys.argv[1] == "PASTE":
 			f.write("PASTE")
-			os.system("notify-send 'naber'")
 			os.system("xclip -selection c -i /dev/multiclip/board30")
 		elif sys.argv[1] == "COPY":
 			f.write("COPY")
-			os.system("notify-send 'naber'")
 			os.system("xclip -selection c -o >> /var/log/multiclip.log")
 	f.write("\n")
 	f.close()
-	os.execv("/usr/bin/notify-send", ("/usr/bin/notify-send", "sex"))
 except Exception as e:
-	f.write("anan zaa XDE\n")
 	f.close()
 	
